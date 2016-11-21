@@ -4,14 +4,23 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package mysqlstore
+package clustersqlstore
 
 import (
+	"database/sql"
 	"encoding/gob"
-	"github.com/gorilla/sessions"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/EnumApps/aerror/debugutil"
+	"github.com/EnumApps/clustersql"
+	"github.com/go-sql-driver/mysql"
+	"github.com/gorilla/sessions"
+)
+
+const (
+	MySessDriverName = "cluster_session_conn"
 )
 
 type FlashMessage struct {
@@ -19,7 +28,7 @@ type FlashMessage struct {
 	Message string
 }
 
-func TestMySQLStore(t *testing.T) {
+func TestClusterSQLStore(t *testing.T) {
 	var req *http.Request
 	var rsp *httptest.ResponseRecorder
 	var hdr http.Header
@@ -30,14 +39,21 @@ func TestMySQLStore(t *testing.T) {
 	var flashes []interface{}
 
 	// Copyright 2012 The Gorilla Authors. All rights reserved.
+	// Copyright 2016 Contro. All rights reserved.
 	// Use of this source code is governed by a BSD-style
 	// license that can be found in the LICENSE file.
 
 	// Round 1 ----------------------------------------------------------------
-
-	store, err := NewMySQLStore("testuser:testpw@tcp(localhost:3306)/testdb?parseTime=true&loc=Local",
-		"sessionstore", "/", 3600, []byte("secret-key"))
+	sqlDriver := clustersql.NewDriver(mysql.MySQLDriver{}, MySessDriverName)
+	sqlDriver.AddNode("db01", "testuser:testpw@tcp(localhost:3306)/testtable?charset=utf8&collation=utf8_general_ci&loc=UTC&parseTime=false")
+	sqlDriver.AddNode("db02", "testuser:testpw@tcp(192.168.1.1:3306)/testtable?charset=utf8&collation=utf8_general_ci&loc=UTC&parseTime=false")
+	sqlDriver.AddNode("db02", "testuser:testpw@tcp(127.0.0.1:3306)/testtable?charset=utf8&collation=utf8_general_ci&loc=UTC&parseTime=false")
+	//
+	sql.Register(MySessDriverName, sqlDriver)
+	// db, err := sql.Open(MySessDriverName, "")
+	store, err := NewClusterSQLStore(MySessDriverName, "/", 3600, []byte("secret-key"))
 	if err != nil {
+		debugutil.PrintTrace(err)
 		t.Fatalf("Error connecting to MySQL: ", err)
 	}
 	defer store.Close()
@@ -46,8 +62,10 @@ func TestMySQLStore(t *testing.T) {
 	rsp = httptest.NewRecorder()
 	// Get a session.
 	if session, err = store.Get(req, "session-key"); err != nil {
+		debugutil.PrintTrace(err)
 		t.Fatalf("Error getting session: %v", err)
 	}
+
 	// Get a flash.
 	flashes = session.Flashes()
 	if len(flashes) != 0 {
@@ -60,6 +78,7 @@ func TestMySQLStore(t *testing.T) {
 	session.AddFlash("baz", "custom_key")
 	// Save.
 	if err = sessions.Save(req, rsp); err != nil {
+		debugutil.PrintTrace(err)
 		t.Fatalf("Error saving session: %v", err)
 	}
 	hdr = rsp.Header()
@@ -75,6 +94,7 @@ func TestMySQLStore(t *testing.T) {
 	rsp = httptest.NewRecorder()
 	// Get a session.
 	if session, err = store.Get(req, "session-key"); err != nil {
+		debugutil.PrintTrace(err)
 		t.Fatalf("Error getting session: %v", err)
 	}
 	// Check all saved values.
@@ -104,6 +124,7 @@ func TestMySQLStore(t *testing.T) {
 	session.Options.MaxAge = -1
 	// Save.
 	if err = sessions.Save(req, rsp); err != nil {
+		debugutil.PrintTrace(err)
 		t.Fatalf("Error saving session: %v", err)
 	}
 
@@ -114,6 +135,7 @@ func TestMySQLStore(t *testing.T) {
 	rsp = httptest.NewRecorder()
 	// Get a session.
 	if session, err = store.Get(req, "session-key"); err != nil {
+		debugutil.PrintTrace(err)
 		t.Fatalf("Error getting session: %v", err)
 	}
 	// Get a flash.
@@ -125,6 +147,7 @@ func TestMySQLStore(t *testing.T) {
 	session.AddFlash(&FlashMessage{42, "foo"})
 	// Save.
 	if err = sessions.Save(req, rsp); err != nil {
+		debugutil.PrintTrace(err)
 		t.Fatalf("Error saving session: %v", err)
 	}
 	hdr = rsp.Header()
@@ -141,6 +164,7 @@ func TestMySQLStore(t *testing.T) {
 	rsp = httptest.NewRecorder()
 	// Get a session.
 	if session, err = store.Get(req, "session-key"); err != nil {
+		debugutil.PrintTrace(err)
 		t.Fatalf("Error getting session: %v", err)
 	}
 	// Check all saved values.
@@ -157,6 +181,7 @@ func TestMySQLStore(t *testing.T) {
 	session.Options.MaxAge = -1
 	// Save.
 	if err = sessions.Save(req, rsp); err != nil {
+		debugutil.PrintTrace(err)
 		t.Fatalf("Error saving session: %v", err)
 	}
 
@@ -168,10 +193,12 @@ func TestMySQLStore(t *testing.T) {
 	rsp = httptest.NewRecorder()
 	// Get a session.
 	if session, err = store.Get(req, "session-key"); err != nil {
+		debugutil.PrintTrace(err)
 		t.Fatalf("Error getting session: %v", err)
 	}
 
 	if err = store.Delete(req, rsp, session); err != nil {
+		debugutil.PrintTrace(err)
 		t.Fatalf("Error deleting session: %v", err)
 	}
 

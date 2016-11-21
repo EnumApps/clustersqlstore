@@ -1,25 +1,24 @@
-mysqlstore
+clustersqlstore
 ==========
 
-Gorilla's Session Store Implementation for MySQL
+Gorilla's Session Store Implementation for ClusterSQL - Server Fram of MySQLs
 
 Installation
 ===========
 
-Run `go get github.com/srinathgs/mysqlstore` from command line. Gets installed in `$GOPATH`
+Run `go get github.com/EnumApps/clustersqlstore` from command line. Gets installed in `$GOPATH`
 
 Usage
 =====
 
-`NewMysqlStore` takes the following paramaters
+`NewClusterSQLStore` takes the following paramaters
 
-    endpoint - A sql.Open style endpoint
-    tableName - table where sessions are to be saved. Required fields are created automatically if the table doesnot exist.
-    path - path for Set-Cookie header
-    maxAge 
+    driverName  - the name of pre-registered cluster drvier, see EnumApps/clustersql (https://github.com/EnumApps/clustersql) for detail
+    path        - path for Set-Cookie header
+    maxAge      - maxAge for session
     codecs
 
-Internally, `mysqlstore` uses [this](https://github.com/go-sql-driver/mysql) MySQL driver.
+Internally, `clustersqlstore` uses [this](https://github.com/EnumApps/clustersql) ClusterSQL driver (not the original one; Since you may using another connection for your major data, this patched version allow multi drivers, each have a custom name).
 
 e.g.,
       
@@ -28,11 +27,11 @@ e.g.,
   
       import (
   	    "fmt"
-  	    "github.com/srinathgs/mysqlstore"
+  	    "github.com/EnumApps/clustersqlstore"
   	    "net/http"
       )
   
-      var store, _ = mysqlstore.NewMySQLStore("UN:PASS@tcp(<IP>:<PORT>)/<DB>?parseTime=true&loc=Local", <tablename>, "/", 3600, []byte("<SecretKey>"))
+      var store, _ = clustersqlstore.NewClusterSQLStore(<drivername>, "/", 3600, []byte("<SecretKey>"))
       defer store.Close()
   
       func sessTest(w http.ResponseWriter, r *http.Request) {
