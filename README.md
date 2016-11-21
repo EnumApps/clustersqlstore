@@ -9,16 +9,18 @@ Dependency
 ===========
 
 EnumApps/clustersql (https://github.com/EnumApps/clustersql) 
-Run
-    go get github.com/go-sql-driver/mysql
-    go get github.com/EnumApps/clustersqlstore
+Run 
+
+      go get github.com/go-sql-driver/mysql 
+      go get github.com/EnumApps/clustersqlstore
 
 
 Installation
 ===========
 
-Run 
-    go get github.com/EnumApps/clustersqlstore
+Run  
+
+      go get github.com/EnumApps/clustersqlstore
 
 from command line. Gets installed in `$GOPATH`
 
