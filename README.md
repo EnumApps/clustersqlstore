@@ -13,6 +13,7 @@ Run
 
       go get github.com/go-sql-driver/mysql 
       go get github.com/EnumApps/clustersqlstore
+      go get github.com/EnumApps/aerror
 
 
 Installation
