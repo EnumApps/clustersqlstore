@@ -8,7 +8,10 @@ Gorilla's Session Store Implementation for ClusterSQL - Server Fram of MySQLs
 Dependency
 ===========
 
-EnumApps/clustersql (https://github.com/EnumApps/clustersql) 
+EnumApps/clustersql (https://github.com/EnumApps/clustersql) ;
+
+EnumApps/aerror (https://github.com/EnumApps/aerror) - for error tracing;
+
 Run 
 
       go get github.com/go-sql-driver/mysql 
