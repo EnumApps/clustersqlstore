@@ -11,6 +11,11 @@ Run `go get github.com/EnumApps/clustersqlstore` from command line. Gets install
 Usage
 =====
 
+
+[![GoDoc](https://godoc.org/github.com/EnumApps/clustersqlstore?status.svg)](http://godoc.org/github.com/EnumApps/clustersqlstore)
+
+
+
 `NewClusterSQLStore` takes the following paramaters
 
     driverName  - the name of pre-registered cluster drvier, see EnumApps/clustersql (https://github.com/EnumApps/clustersql) for detail
