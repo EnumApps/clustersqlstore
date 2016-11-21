@@ -1,19 +1,29 @@
+[![GoDoc](https://godoc.org/github.com/EnumApps/clustersqlstore?status.svg)](http://godoc.org/github.com/EnumApps/clustersqlstore)
+
 clustersqlstore
 ==========
 
 Gorilla's Session Store Implementation for ClusterSQL - Server Fram of MySQLs
 
+Dependency
+===========
+
+EnumApps/clustersql (https://github.com/EnumApps/clustersql) 
+Run
+    go get github.com/go-sql-driver/mysql
+    go get github.com/EnumApps/clustersqlstore
+
+
 Installation
 ===========
 
-Run `go get github.com/EnumApps/clustersqlstore` from command line. Gets installed in `$GOPATH`
+Run 
+    go get github.com/EnumApps/clustersqlstore
+
+from command line. Gets installed in `$GOPATH`
 
 Usage
 =====
-
-
-[![GoDoc](https://godoc.org/github.com/EnumApps/clustersqlstore?status.svg)](http://godoc.org/github.com/EnumApps/clustersqlstore)
-
 
 
 `NewClusterSQLStore` takes the following paramaters
