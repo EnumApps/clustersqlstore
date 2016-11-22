@@ -3,22 +3,6 @@
 Copyright (c) 2016 Contributors. See the list of contributors in the CONTRIBUTORS file for details.
 
 This software is licensed under a MIT style license available in the LICENSE file.
-
-create table with following SQL
-CREATE TABLE `session_cluster` (
-  `id` char(40) NOT NULL COMMENT '2006-01-02T15:04:05.999999999Z07:00+(00000-99999)',
-  `data` longblob NOT NULL,
-  `expire_on` datetime NOT NULL,
-  `modify_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=ascii;
-
-clean up session with following SQL
-
-CREATE EVENT AutoDeleteOldSession
-ON SCHEDULE EVERY 1 HOUR
-ON COMPLETION PRESERVE
-DISABLE ON SLAVE
-DO DELETE LOW_PRIORITY FROM mlmmember.session_cluster WHERE `expire_on` < DATE_SUB(NOW(), INTERVAL 30 HOUR)
 */
 package clustersqlstore
 
